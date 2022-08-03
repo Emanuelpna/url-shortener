@@ -8,7 +8,7 @@
     "db:migrate": "prisma migrate dev",
     "start": "node .",
     "dev": "nodemon .",
-    "test": "jest --env node"
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --env node"
   },
   "keywords": [],
   "author": "",
@@ -23,5 +23,8 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.19"
+  },
+  "jest": {
+    "transform": {}
   }
 }
