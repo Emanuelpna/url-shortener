@@ -9,11 +9,12 @@ services:
       - .env
     ports:
       - '${POSTGRES_PORT}:5432'
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
 
   server:
     depends_on:
       - db
-    image: node:16
     build: .
     restart: always
     env_file:
@@ -21,6 +22,7 @@ services:
     ports:
       - ${PORT}:${PORT}
     volumes:
-      - .:/home/node/app
+      - .:/app
 
-  
+volumes:
+  db_data:

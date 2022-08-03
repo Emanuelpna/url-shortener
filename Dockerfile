@@ -1,11 +1,15 @@
 FROM node:16
 
-WORKDIR /home/node/app
+USER node
+
+WORKDIR /app
+
+RUN chown node:node /app
+
+COPY package.json .
+
+RUN npm install
 
 COPY . .
-
-RUN npm i
-
-USER node
 
 CMD ["npm", "run", "dev"]
