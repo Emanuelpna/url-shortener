@@ -1,6 +1,9 @@
 import dotenv from "dotenv";
+import crypto from "crypto";
 import express from "express";
 import { Prisma } from "@prisma/client";
+import cookieParser from "cookie-parser";
+import cookieSession from "cookie-session";
 
 import { FieldIsNotUniqueException } from "./domain/errors/FieldIsNotUniqueException.js";
 import { PermissionDeniedException } from "./domain/errors/PermissionDeniedException.js";
@@ -8,25 +11,40 @@ import { ResourceNotFoundException } from "./domain/errors/ResourceNotFoundExcep
 
 import urlsRoutes from "./route/urlsRoutes.js";
 import usersRoutes from "./route/usersRoutes.js";
+import authRoutes, { sessionMiddleware } from "./route/authRoutes.js";
 
 dotenv.config();
 
 const app = express();
 
 app.use(express.json());
-
-// TODO: Add Cookie bases User Authentication
+app.use(cookieParser());
+app.use(
+  cookieSession({
+    name: "session",
+    keys: process.env.SESSION_KEYS
+      ? JSON.parse(process.env.SESSION_KEYS)
+      : ["6ca4e704d582c2", "749ea55fb82c9a"],
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // HTTPS
+  })
+);
 
 app.get("/", (req, res) => {
   res.send({
     message: "Hello World",
+    userSession: req.user,
+    processEnv: process.env,
+    sessions: req.session.sessions,
+    sessionToken: req.cookies.session_token,
   });
 });
 
-app.use("/", urlsRoutes);
-app.use("/", usersRoutes);
+app.use("/", authRoutes);
+app.use("/", sessionMiddleware, urlsRoutes);
+app.use("/", sessionMiddleware, usersRoutes);
 
-// Must be the last one `app.use` on this file
+// Must be the last one `app.use` on this file. And must have the 4 args in order to be used as intended by express
 app.use((error, req, res, next) => {
   console.error(error);
 

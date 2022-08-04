@@ -18,9 +18,7 @@ router.get("/u/:shortenedUrl", async (req, res, next) => {
 
 router.get("/urls", async (req, res, next) => {
   try {
-    const userId = Number(req.query.userId);
-
-    const urls = await urlsService.getUrlsByUser(userId);
+    const urls = await urlsService.getUrlsByUser(req.user);
 
     res.status(200).send(urls);
   } catch (error) {
@@ -31,9 +29,8 @@ router.get("/urls", async (req, res, next) => {
 router.get("/urls/:urlId", async (req, res, next) => {
   try {
     const urlId = Number(req.params.urlId);
-    const userId = Number(req.query.userId);
 
-    const url = await urlsService.getUrl(urlId, userId);
+    const url = await urlsService.getUrl(urlId, req.user);
 
     res.status(200).send(url);
   } catch (error) {
@@ -44,9 +41,8 @@ router.get("/urls/:urlId", async (req, res, next) => {
 router.post("/urls", async (req, res, next) => {
   try {
     const payload = req.body;
-    const userId = Number(req.query.userId);
 
-    const urls = await urlsService.saveUrl(userId, payload.url);
+    const urls = await urlsService.saveUrl(req.user, payload.url);
 
     res.status(200).send(urls);
   } catch (error) {
@@ -57,9 +53,8 @@ router.post("/urls", async (req, res, next) => {
 router.post("/urls/:urlId/hit", async (req, res, next) => {
   try {
     const urlId = Number(req.params.urlId);
-    const userId = Number(req.query.userId);
 
-    const urls = await urlsService.hitUrl(userId, urlId);
+    const urls = await urlsService.hitUrl(req.user, urlId);
 
     res.status(200).send(urls);
   } catch (error) {
@@ -70,9 +65,8 @@ router.post("/urls/:urlId/hit", async (req, res, next) => {
 router.delete("/urls/:urlId", async (req, res, next) => {
   try {
     const urlId = Number(req.params.urlId);
-    const userId = Number(req.query.userId);
 
-    const urls = await urlsService.deleteUrl(urlId, userId);
+    const urls = await urlsService.deleteUrl(urlId, req.user);
 
     res.status(200).send(urls);
   } catch (error) {
