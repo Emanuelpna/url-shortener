@@ -68,15 +68,11 @@ export const saveUrl = async (user, url) => {
   return newUrl;
 };
 
-export const hitUrl = async (urlId, user) => {
-  const userData = await usersData.getUserByEmail(user.email);
-
+export const hitUrl = async (urlId) => {
   const url = await urlsData.getUrl(urlId);
 
-  if (url.authorId !== userData.id) throw new PermissionDeniedException();
-
   const payload = {
-    ...url,
+    // ...url,
     lastTimeSeen: new Date(),
     timesHit: url.timesHit++,
   };

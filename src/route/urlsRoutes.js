@@ -10,6 +10,8 @@ router.get("/u/:shortenedUrl", async (req, res, next) => {
 
     const url = await urlsService.getUrlByHash(shortenedUrl);
 
+    await urlsService.hitUrl(url.id);
+
     res.redirect(301, url.originalUrl);
   } catch (error) {
     next(error);
@@ -54,7 +56,7 @@ router.post("/urls/:urlId/hit", async (req, res, next) => {
   try {
     const urlId = Number(req.params.urlId);
 
-    const urls = await urlsService.hitUrl(req.user, urlId);
+    const urls = await urlsService.hitUrl(urlId);
 
     res.status(200).send(urls);
   } catch (error) {
