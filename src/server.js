@@ -2,11 +2,11 @@ import dotenv from "dotenv";
 import express from "express";
 import { Prisma } from "@prisma/client";
 
-import { UrlShortener } from "./data/actions/UrlShortener.js";
-
 import { FieldIsNotUniqueException } from "./domain/errors/FieldIsNotUniqueException.js";
+import { PermissionDeniedException } from "./domain/errors/PermissionDeniedException.js";
 import { ResourceNotFoundException } from "./domain/errors/ResourceNotFoundException.js";
 
+import urlsRoutes from "./route/urlsRoutes.js";
 import usersRoutes from "./route/usersRoutes.js";
 
 dotenv.config();
@@ -15,13 +15,15 @@ const app = express();
 
 app.use(express.json());
 
+// TODO: Add Cookie bases User Authentication
+
 app.get("/", (req, res) => {
   res.send({
-    originalUrl: url,
-    shortenedUrl: `https://urlshort.com/${UrlShortener.createHash()}`,
+    message: "Hello World",
   });
 });
 
+app.use("/", urlsRoutes);
 app.use("/", usersRoutes);
 
 // Must be the last one `app.use` on this file
@@ -47,6 +49,12 @@ app.use((error, req, res, next) => {
 
   if (error instanceof FieldIsNotUniqueException) {
     return res.status(422).send({
+      message: error.message,
+    });
+  }
+
+  if (error instanceof PermissionDeniedException) {
+    return res.status(403).send({
       message: error.message,
     });
   }
