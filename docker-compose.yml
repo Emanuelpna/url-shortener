@@ -12,6 +12,15 @@ services:
     volumes:
       - ./db_data:/var/lib/postgresql/data
 
+  redis:
+    image: redis
+    env_file:
+      - .env
+    expose:
+      - 6379
+    volumes:
+      - ./redis_data:/docker/host/dir
+
   server:
     depends_on:
       - db
@@ -26,3 +35,4 @@ services:
 
 volumes:
   db_data:
+  redis_data:
