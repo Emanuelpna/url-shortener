@@ -66,7 +66,7 @@ export const updateUrl = (urlId, payload) => {
       id: urlId,
     },
     data: {
-      payload,
+      ...payload,
     },
   });
 };
