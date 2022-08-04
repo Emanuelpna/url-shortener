@@ -3,13 +3,16 @@ import crypto from "crypto";
 import { prisma } from "../infra/database/client.js";
 
 const createHash = () => {
-  const baseHash = crypto.randomBytes(4).toString("base64url");
+  const baseHash = crypto.randomBytes(4).toString("hex");
 
   const salt = crypto.randomBytes(2).toString("hex");
 
-  const hash = crypto.createHash("md5").update(baseHash, "utf8").digest("hex");
+  const hash = crypto
+    .createHash("md5")
+    .update(`${salt}${baseHash}`, "utf8")
+    .digest("base64url");
 
-  return `${salt}${hash}`.substring(0, 12);
+  return hash.substring(0, 12);
 };
 
 export const getUrlsByUser = (userId) => {
