@@ -11,20 +11,21 @@ datasource db {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  createdAt    DateTime @default(now())
-  email        String   @unique
-  name         String?
-  password     String   
-  posts        Url[]
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  email     String   @unique
+  name      String?
+  password  String
+  urls      Url[]
 }
 
 model Url {
   id           Int      @id @default(autoincrement())
   createdAt    DateTime @default(now())
   originalUrl  String   @db.VarChar(255)
-  shortenedUrl String   @db.VarChar(255)  
+  shortenedUrl String   @unique @db.VarChar(255)
+  lastTimeSeen DateTime @default(now())
+  timesHit     Int      @default(0)
   author       User?    @relation(fields: [authorId], references: [id])
   authorId     Int?
 }
-
